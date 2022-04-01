@@ -136,7 +136,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <ExceptionHandling>false</ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>

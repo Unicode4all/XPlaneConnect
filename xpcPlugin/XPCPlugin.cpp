@@ -74,12 +74,23 @@
 #include <mach/mach_time.h>
 #endif
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/info_parser.hpp>
+#include <format>
+#include "Configuration.h"
+
 #define RECVPORT 49009 // Port that the plugin receives commands on
+
 #define OPS_PER_CYCLE 20 // Max Number of operations per cycle
 
-#define XPC_PLUGIN_VERSION "1.3-rc.1"
+#define XPC_PLUGIN_VERSION "1.3-rc.1-corn"
+
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 using namespace std;
+namespace pt = boost::property_tree;
 
 XPC::UDPSocket* sock = NULL;
 XPC::Timer* timer = NULL;
@@ -88,6 +99,8 @@ double start;
 double lap;
 static double timeConvert = 0.0;
 int benchmarkingSwitch = 0; // 1 = time for operations, 2 = time for op + cycle;
+
+uint16_t socket_port = 0;
 
 PLUGIN_API int XPluginStart(char* outName, char* outSig, char* outDesc);
 PLUGIN_API void	XPluginStop(void);
@@ -148,8 +161,12 @@ PLUGIN_API void XPluginDisable(void)
 
 PLUGIN_API int XPluginEnable(void)
 {
+	// read config
+	configuration::Configuration config;
+	config.load();
+
 	// Open sockets
-	sock = new XPC::UDPSocket(RECVPORT);
+	sock = new XPC::UDPSocket(socket_port);
 	timer = new XPC::Timer();
 	
 	XPC::MessageHandlers::SetSocket(sock);
@@ -234,7 +251,7 @@ float XPCFlightLoopCallback(float inElapsedSinceLastCall,
 	{
 		XPC::Log::WriteLine(LOG_WARN, "EXEC", "Cleared UDP Buffer");
 		delete sock;
-		sock = new XPC::UDPSocket(RECVPORT);
+		sock = new XPC::UDPSocket(socket_port);
 		XPC::MessageHandlers::SetSocket(sock);
 	}
 	return -1;

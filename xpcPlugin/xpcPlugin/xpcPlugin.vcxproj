@@ -22,7 +22,7 @@
     <ProjectGuid>{6AEF5D28-2701-44FF-AE10-1DEF07C5CAEA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>xpcPlugin</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -69,8 +69,8 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\XPlaneConnect\</OutDir>
     <TargetExt>.xpl</TargetExt>
-    <IncludePath>..\SDK\CHeaders\XPLM;$(IncludePath)</IncludePath>
-    <LibraryPath>..\xpcPlugin\SDK\Libraries\Win;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\boost_1_78_0;..\SDK\CHeaders\XPLM;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\boost_1_78_0\libs;..\xpcPlugin\SDK\Libraries\Win;$(LibraryPath)</LibraryPath>
     <TargetName>win</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -91,8 +91,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.xpl</TargetExt>
-    <IncludePath>..\xpcPlugin\SDK\CHeaders\XPLM;..\SDK\CHeaders\XPLM;..\..\C\src;$(IncludePath)</IncludePath>
-    <LibraryPath>..\xpcPlugin\SDK\Libraries\Win;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\boost_1_78_0;..\xpcPlugin\SDK\CHeaders\XPLM;..\SDK\CHeaders\XPLM;..\..\C\src;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\boost_1_78_0\libs;D:\boost_1_78_0\lib64-msvc-14.2;..\xpcPlugin\SDK\Libraries\Win;$(LibraryPath)</LibraryPath>
     <TargetName>win</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\XPlaneConnect\64\</OutDir>
@@ -111,6 +111,7 @@
       </DisableSpecificWarnings>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -136,6 +137,7 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <ExceptionHandling>false</ExceptionHandling>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -188,12 +190,13 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <InlineFunctionExpansion />
-      <ExceptionHandling>false</ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;libboost_exception-vc142-mt-x64-1_78.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <GenerateMapFile>
       </GenerateMapFile>
@@ -201,6 +204,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Configuration.h" />
     <ClInclude Include="..\DataManager.h" />
     <ClInclude Include="..\Drawing.h" />
     <ClInclude Include="..\Log.h" />
@@ -211,6 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\CameraCallbacks.cpp" />
+    <ClCompile Include="..\Configuration.cpp" />
     <ClCompile Include="..\DataManager.cpp" />
     <ClCompile Include="..\Drawing.cpp" />
     <ClCompile Include="..\Log.cpp" />

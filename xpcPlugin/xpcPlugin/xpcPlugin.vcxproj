@@ -91,8 +91,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.xpl</TargetExt>
-    <IncludePath>D:\boost_1_78_0;..\xpcPlugin\SDK\CHeaders\XPLM;..\SDK\CHeaders\XPLM;..\..\C\src;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\boost_1_78_0\libs;D:\boost_1_78_0\lib64-msvc-14.2;..\xpcPlugin\SDK\Libraries\Win;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\xpcPlugin\SDK\CHeaders\XPLM;..\SDK\CHeaders\XPLM;..\..\C\src;$(IncludePath)</IncludePath>
+    <LibraryPath>..\xpcPlugin\SDK\Libraries\Win;$(LibraryPath)</LibraryPath>
     <TargetName>win</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\XPlaneConnect\64\</OutDir>
@@ -196,7 +196,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>OpenGL32.lib;libboost_exception-vc142-mt-x64-1_78.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <GenerateMapFile>
       </GenerateMapFile>

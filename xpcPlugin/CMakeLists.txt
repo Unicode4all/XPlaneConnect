@@ -20,7 +20,7 @@ set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
 set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-find_package(Boost 1.78.0 COMPONENTS property_tree)
+find_package(Boost 1.70.0 COMPONENTS property_tree)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   add_executable(foo foo.cc)

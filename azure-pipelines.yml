@@ -15,8 +15,8 @@ trigger:
   #   - '*'
 variables:
   xpcBuildOutputPath: xpcPlugin/XPlaneConnect/
-  xpcArtifactNameLinux: xpc-linux
-  xpcArtifactNameMac: xpc-macos
+#  xpcArtifactNameLinux: xpc-linux
+#  xpcArtifactNameMac: xpc-macos
   xpcArtifactNameWindows: xpc-windows
   xpcPackageName: XPlaneConnect
 
@@ -25,54 +25,54 @@ variables:
   #
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#sep-github
-  xpcGitHubConnection: XPC-Azure
+  xpcGitHubConnection: GH-Azure
 
 stages:
   - stage: Build
     jobs:
-      - job: macOS
-        pool:
-          vmImage: "macos-latest"
-
-        steps:
-          - task: Xcode@5
-            inputs:
-              actions: "build"
-              scheme: ""
-              sdk: "macosx10.15"
-              configuration: "Release"
-              xcWorkspacePath: "xpcPlugin/xpcPlugin.xcodeproj"
-              xcodeVersion: "default" # Options: 8, 9, 10, default, specifyPath
-          - task: PublishPipelineArtifact@0
-            inputs:
-              artifactName: "$(xpcArtifactNameMac)"
-              targetPath: "$(xpcBuildOutputPath)"
-
-      - job: Linux
-        pool:
-          vmImage: "ubuntu-latest"
-
-        steps:
-          - script: |
-              sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-              sudo apt-get update
-              sudo apt-get install -y g++-5 mesa-common-dev g++-multilib g++-5-multilib
-            displayName: "apt install"
-
-          - script: |
-              cd xpcPlugin
-              cmake .
-              make
-            displayName: "make"
-
-          - task: PublishPipelineArtifact@0
-            inputs:
-              artifactName: "xpc-linux"
-              targetPath: "$(xpcBuildOutputPath)"
+#      - job: macOS
+#        pool:
+#          vmImage: "macos-latest"
+#
+#        steps:
+#          - task: Xcode@5
+#            inputs:
+#              actions: "build"
+#              scheme: ""
+#              sdk: "macosx10.15"
+#              configuration: "Release"
+#              xcWorkspacePath: "xpcPlugin/xpcPlugin.xcodeproj"
+#              xcodeVersion: "default" # Options: 8, 9, 10, default, specifyPath
+#          - task: PublishPipelineArtifact@0
+#            inputs:
+#              artifactName: "$(xpcArtifactNameMac)"
+#              targetPath: "$(xpcBuildOutputPath)"
+#
+#      - job: Linux
+#        pool:
+#          vmImage: "ubuntu-latest"
+#
+#        steps:
+#          - script: |
+#              sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+#              sudo apt-get update
+#              sudo apt-get install -y g++ mesa-common-dev g++-multilib libboost-all-dev
+#            displayName: "apt install"
+#
+#          - script: |
+#              cd xpcPlugin
+#              cmake .
+#              make
+#            displayName: "make"
+#
+#          - task: PublishPipelineArtifact@0
+#            inputs:
+#              artifactName: "xpc-linux"
+#              targetPath: "$(xpcBuildOutputPath)"
 
       - job: Windows
         pool:
-          vmImage: "vs2017-win2016"
+          vmImage: "windows-2022"
 
         variables:
           solution: "xpcPlugin/xpcPlugin/xpcPlugin.sln"
@@ -123,15 +123,15 @@ stages:
           vmImage: "ubuntu-latest"
 
         steps:
-          - task: DownloadPipelineArtifact@0
-            inputs:
-              artifactName: "$(xpcArtifactNameMac)"
-              targetPath: $(System.DefaultWorkingDirectory)/$(xpcPackageName)
-          - task: DownloadPipelineArtifact@0
-            inputs:
-              artifactName: "$(xpcArtifactNameLinux)"
-              targetPath: $(System.DefaultWorkingDirectory)/$(xpcPackageName)
-
+#          - task: DownloadPipelineArtifact@0
+#            inputs:
+#              artifactName: "$(xpcArtifactNameMac)"
+#              targetPath: $(System.DefaultWorkingDirectory)/$(xpcPackageName)
+#          - task: DownloadPipelineArtifact@0
+#            inputs:
+#              artifactName: "$(xpcArtifactNameLinux)"
+#              targetPath: $(System.DefaultWorkingDirectory)/$(xpcPackageName)
+#
           - task: DownloadPipelineArtifact@0
             inputs:
               artifactName: "$(xpcArtifactNameWindows)"

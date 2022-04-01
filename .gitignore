@@ -97,3 +97,5 @@ Docs/~$Capability Matrix.xlsx
 *.egg-info
 build
 dist
+/xpcPlugin/xpcPlugin/.vs/xpcPlugin
+/xpcPlugin/xpcPlugin/packages

@@ -36,6 +36,9 @@
     <ClInclude Include="..\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Configuration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\XPCPlugin.cpp">
@@ -65,6 +68,9 @@
     <ClCompile Include="..\CameraCallbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Configuration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\SDK\Libraries\Win\XPLM.lib">
@@ -79,5 +85,8 @@
     <Library Include="..\SDK\Libraries\Win\XPWidgets_64.lib">
       <Filter>Resource Files</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -29,7 +29,7 @@ variables:
 
 stages:
   - stage: Build
-#    jobs:
+    jobs:
 #      - job: macOS
 #        pool:
 #          vmImage: "macos-latest"

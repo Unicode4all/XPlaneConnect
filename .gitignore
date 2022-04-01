@@ -98,3 +98,4 @@ Docs/~$Capability Matrix.xlsx
 build
 dist
 /xpcPlugin/xpcPlugin/.vs/xpcPlugin
+/xpcPlugin/xpcPlugin/packages

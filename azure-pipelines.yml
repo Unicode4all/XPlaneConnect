@@ -72,7 +72,7 @@ stages:
 
       - job: Windows
         pool:
-          vmImage: "vs2017-win2016"
+          vmImage: "windows-latest"
 
         variables:
           solution: "xpcPlugin/xpcPlugin/xpcPlugin.sln"

@@ -74,9 +74,6 @@
 #include <mach/mach_time.h>
 #endif
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/info_parser.hpp>
-#include <format>
 #include "Configuration.h"
 
 #define RECVPORT 49009 // Port that the plugin receives commands on

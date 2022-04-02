@@ -99,3 +99,5 @@ build
 dist
 /xpcPlugin/xpcPlugin/.vs/xpcPlugin
 /xpcPlugin/xpcPlugin/packages
+/xpcPlugin/.vs
+/xpcPlugin/CMakeSettings.json

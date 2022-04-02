@@ -20,18 +20,16 @@ set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
 set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-find_package(Boost 1.70.0 COMPONENTS property_tree)
-if(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-  add_executable(foo foo.cc)
-  
-endif()
+
+find_package(Boost REQUIRED )
+include_directories(${Boost_INCLUDE_DIRS})
 
 add_library(xpc64 SHARED XPCPlugin.cpp
 	CameraCallbacks.cpp
 	DataManager.cpp
 	Drawing.cpp
 	Log.cpp
+	Configuration.cpp
 	Message.cpp
 	MessageHandlers.cpp
 	Timer.cpp
@@ -47,6 +45,7 @@ add_library(xpc32 SHARED XPCPlugin.cpp
 	Drawing.cpp
 	Log.cpp
 	Message.cpp
+	Configuration.cpp
 	MessageHandlers.cpp
 	Timer.cpp
 	UDPSocket.cpp)

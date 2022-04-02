@@ -2,7 +2,7 @@
 #define CONFIGURATION_H
 
 #include <cstdint>
-#include <format>
+#include <fmt/core.h>
 #include <fstream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
@@ -35,9 +35,6 @@ public:
 	void save(const std::string filename = defaultConfigName);
 private:
 	pt::ptree tree;
-
-	uint16_t port = 49009;
-	int opsPerCycle = 40;
 };
 }
 

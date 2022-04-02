@@ -15,7 +15,7 @@ trigger:
   #   - '*'
 variables:
   xpcBuildOutputPath: xpcPlugin/XPlaneConnect/
-#  xpcArtifactNameLinux: xpc-linux
+  xpcArtifactNameLinux: xpc-linux
 #  xpcArtifactNameMac: xpc-macos
   xpcArtifactNameWindows: xpc-windows
   xpcPackageName: XPlaneConnect
@@ -35,11 +35,14 @@ stages:
 #          vmImage: "macos-latest"
 #
 #        steps:
+#          - script: |
+#              brew install glfw fmt boost
+#
 #          - task: Xcode@5
 #            inputs:
 #              actions: "build"
 #              scheme: ""
-#              sdk: "macosx10.15"
+#              sdk: "macosx"
 #              configuration: "Release"
 #              xcWorkspacePath: "xpcPlugin/xpcPlugin.xcodeproj"
 #              xcodeVersion: "default" # Options: 8, 9, 10, default, specifyPath
@@ -47,28 +50,28 @@ stages:
 #            inputs:
 #              artifactName: "$(xpcArtifactNameMac)"
 #              targetPath: "$(xpcBuildOutputPath)"
-#
-#      - job: Linux
-#        pool:
-#          vmImage: "ubuntu-latest"
-#
-#        steps:
-#          - script: |
-#              sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-#              sudo apt-get update
-#              sudo apt-get install -y g++ mesa-common-dev g++-multilib libboost-all-dev
-#            displayName: "apt install"
-#
-#          - script: |
-#              cd xpcPlugin
-#              cmake .
-#              make
-#            displayName: "make"
-#
-#          - task: PublishPipelineArtifact@0
-#            inputs:
-#              artifactName: "xpc-linux"
-#              targetPath: "$(xpcBuildOutputPath)"
+
+      - job: Linux
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - script: |
+              sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+              sudo apt-get update
+              sudo apt-get install -y g++ mesa-common-dev g++-multilib libboost-all-dev libfmt-dev ninja-build
+            displayName: "Install Dependencies"
+
+          - script: |
+              cd xpcPlugin
+              cmake .
+              make
+            displayName: "Compile"
+
+          - task: PublishPipelineArtifact@0
+            inputs:
+              artifactName: "xpc-linux"
+              targetPath: "$(xpcBuildOutputPath)"
 
       - job: Windows
         pool:
@@ -82,19 +85,22 @@ stages:
 
         steps:
           - task: NuGetToolInstaller@0
+            displayName: "Install Toolchain"
 
           - task: NuGetCommand@2
+            displayName: "Restore Solution"
             inputs:
               restoreSolution: "$(solution)"
 
-          - task: VSBuild@1
-            inputs:
-              platform: "Win32"
-              solution: "$(solution)"
-              configuration: "$(buildConfiguration)"
-              msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
+#          - task: VSBuild@1
+#            inputs:
+#              platform: "Win32"
+#              solution: "$(solution)"
+#              configuration: "$(buildConfiguration)"
+#              msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
 
           - task: VSBuild@1
+            displayName: "Build for AMD64"
             inputs:
               platform: "x64"
               solution: "$(solution)"
@@ -102,15 +108,17 @@ stages:
               msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
 
           - task: Bash@3
+            displayName: "Build dir cleanup"
             inputs:
               targetType: "inline"
               script: |
-                rm $(xpcBuildOutputPath)/win.exp
-                rm $(xpcBuildOutputPath)/win.lib
                 rm $(xpcBuildOutputPath)/64/win.exp
                 rm $(xpcBuildOutputPath)/64/win.lib
+#               rm $(xpcBuildOutputPath)/win.exp
+#               rm $(xpcBuildOutputPath)/win.lib
 
           - task: PublishPipelineArtifact@0
+            displayName: "Publish Artifact"
             inputs:
               artifactName: "$(xpcArtifactNameWindows)"
               targetPath: "$(xpcBuildOutputPath)"
@@ -127,23 +135,27 @@ stages:
 #            inputs:
 #              artifactName: "$(xpcArtifactNameMac)"
 #              targetPath: $(System.DefaultWorkingDirectory)/$(xpcPackageName)
-#          - task: DownloadPipelineArtifact@0
-#            inputs:
-#              artifactName: "$(xpcArtifactNameLinux)"
-#              targetPath: $(System.DefaultWorkingDirectory)/$(xpcPackageName)
-#
           - task: DownloadPipelineArtifact@0
+            displayName: "Download Linux Artifact"
+            inputs:
+              artifactName: "$(xpcArtifactNameLinux)"
+              targetPath: $(System.DefaultWorkingDirectory)/$(xpcPackageName)
+
+          - task: DownloadPipelineArtifact@0
+            displayName: "Download Windows Artifact"
             inputs:
               artifactName: "$(xpcArtifactNameWindows)"
               targetPath: $(System.DefaultWorkingDirectory)/$(xpcPackageName)
 
           - task: PublishPipelineArtifact@0
+            displayName: "Publish"
             inputs:
               artifactName: "$(xpcPackageName)"
               targetPath: $(System.DefaultWorkingDirectory)/$(xpcPackageName)
 
           # Archive Files
           - task: ArchiveFiles@2
+            displayName: "Archive"
             inputs:
               rootFolderOrFile: "$(System.DefaultWorkingDirectory)/$(xpcPackageName)"
               includeRootFolder: true
@@ -153,6 +165,7 @@ stages:
           # Uploads the .zip to GitHub and creates a new "Release" with the commit tag
           # This tasks runs only on pushed tags
           - task: GitHubRelease@0
+            displayName: "Create GitHub Release"
             inputs:
               gitHubConnection: "$(xpcGitHubConnection)"
               repositoryName: "$(Build.Repository.Name)"

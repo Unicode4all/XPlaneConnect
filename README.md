@@ -1,4 +1,6 @@
-# X-Plane Connect
+# 🌽 X-Plane Connect
+[![Build Status](https://reachthedestination.visualstudio.com/XPlaneConnect/_apis/build/status/Unicode4all.XPlaneConnect?branchName=master)](https://reachthedestination.visualstudio.com/XPlaneConnect/_build/latest?definitionId=1&branchName=master)
+
 The X-Plane Connect (XPC) Toolbox is an open source research tool used to
 interact with the commercial flight simulator software X-Plane. XPC allows users
 to control aircraft and receive state information from aircraft simulated in
@@ -9,11 +11,26 @@ in-house flight simulation software. Possible applications include active contro
 of an XPlane simulation, flight visualization, recording states during a flight,
 or interacting with a mission over UDP.
 
-### Architecture
+
+## Fork
+---
+This fork was made for extended support of this plugin, especially because the rise of a new FSEconomy client that uses it.  
+
+### Planned features:
+* ~~Configuration support~~
+* GUI configuration tool
+
+### Why corn?
+I love corn 🌽.
+
+
+## Architecture
+---
 XPC includes an X-Plane plugin (xpcPlugin) and clients written in several
 languages that interact with the plugin.
 
-#### Quick Start
+## Quick Start
+---
 To get started using X-Plane Connect, do the following.
 
 1. Purchase and install X-Plane 9, 10 or 11.
@@ -26,11 +43,11 @@ client's language. The client directories generally include a `src` folder
 containing the client source code, and an `Examples` folder containing sample
 code demonstrating how to use the client.
 
-#### Additional Information
+### Additional Information
 For detailed information about XPC and how to use the XPC clients, refer to the
 [XPC Wiki](https://github.com/nasa/XPlaneConnect/wiki).
 
-#### Capabilities
+### Capabilities
 The XPC Toolbox allows the user to manipulate the internal state of X-Plane by
 reading and setting DataRefs, a complete list of which can be found on the
 [X-Plane SDK wiki](http://www.xsquawkbox.net/xpsdk/docs/DataRefs.html).
@@ -44,13 +61,14 @@ physics simulation engine.
 ### Compatibility
 XPC has been tested with the following software versions:
 * Windows: Vista, 7, & 8
-* Mac OSX: 10.8-10.14
+* ~~Mac OSX: 10.8-10.14~~ This fork currently doesn't support building on macOS
 * Linux: Tested on Red Hat Enterprise Linux Workstation release 6.6
 * X-Plane: 9, 10 & 11
 
 ### Contributing
 All contributions are welcome! If you are having problems with the plugin, please
-open an issue on GitHub or email [Chris Teubert](mailto:christopher.a.teubert@nasa.gov).
+open an issue on GitHub.
+
 If you would like to contribute directly, please feel free to open a pull request
 against the "develop" branch. Pull requests will be evaluated and integrated into
 the next official release.

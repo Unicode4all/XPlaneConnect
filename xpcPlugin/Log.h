@@ -26,6 +26,7 @@
 
 namespace XPC
 {
+	
 	/// Handles logging for the plugin.
 	///
 	/// \details Provides functions to write lines to the XPC log file.
@@ -39,8 +40,10 @@ namespace XPC
 	public:
 		/// Initializes the logging component by deleting old log files,
 		/// writing header information to the log file.
-		static void Initialize(const std::string& header);
-
+		static void Initialize(const std::string& version, int level);
+		static void SetLogLevel(int);
+		static int GetLogLevel();
+		
 		/// Closes the log file.
 		static void Close();
 
@@ -61,6 +64,8 @@ namespace XPC
 		///
 		/// \param value The value to write.
 		static void WriteLine(int level, const std::string& tag, const std::string& value);
+	private:
+		static inline int LogLevel;
 	};
 }
 #endif

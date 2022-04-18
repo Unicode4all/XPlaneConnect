@@ -83,15 +83,18 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.xpl</TargetExt>
-    <IncludePath>..\xpcPlugin\SDK\CHeaders\XPLM;..\SDK\CHeaders\XPLM;..\..\C\src;$(IncludePath)</IncludePath>
+    <IncludePath>..\xsb_public;..\imgui\misc\freetype;..\imgui;..\SDK\CHeaders\Wrappers;..\lib;..\SDK\CHeaders\XPLM;..\..\C\src;$(IncludePath)</IncludePath>
     <LibraryPath>..\xpcPlugin\SDK\Libraries\Win;$(LibraryPath)</LibraryPath>
     <TargetName>win</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\XPlaneConnect\64\</OutDir>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.xpl</TargetExt>
-    <IncludePath>..\xpcPlugin\SDK\CHeaders\XPLM;..\SDK\CHeaders\XPLM;..\..\C\src;$(IncludePath)</IncludePath>
+    <IncludePath>..\xsb_public;..\imgui\misc\freetype;..\imgui;..\SDK\CHeaders\Wrappers;..\lib;..\SDK\CHeaders\XPLM;..\..\C\src;$(IncludePath)</IncludePath>
     <LibraryPath>..\xpcPlugin\SDK\Libraries\Win;$(LibraryPath)</LibraryPath>
     <TargetName>win</TargetName>
     <LinkIncremental>true</LinkIncremental>
@@ -152,7 +155,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>IBM=1;XPLM200;_DEBUG;_WINDOWS;_USRDLL;XPCPLUGIN_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IBM=1;XPLM300;XPLM301;XPLM210;XPLM_DEPRECATED;XPLM200;_DEBUG;_WINDOWS;_USRDLL;XPCPLUGIN_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -170,13 +173,18 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <CustomBuildStep>
+      <Command>xcopy /y /d  "$(ProjectDir)\..\XPlaneConnect\64\win.xpl" "E:\SteamLibrary\steamapps\common\X-Plane 11\Resources\plugins\XPlaneConnect\64"</Command>
+      <Outputs>win.xpl</Outputs>
+      <Message>Copying to X-Plane</Message>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Full</Optimization>
-      <PreprocessorDefinitions>IBM=1;XPLM200;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IBM=1;XPLM300;XPLM301;XPLM210;XPLM_DEPRECATED;XPLM200;_DEBUG;_WINDOWS;_USRDLL;XPCPLUGIN_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -187,7 +195,7 @@
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <InlineFunctionExpansion />
@@ -202,37 +210,65 @@
       <GenerateMapFile>
       </GenerateMapFile>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalOptions>/verbose:lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Configuration.h" />
+    <ClInclude Include="..\ConfigWindow.h" />
     <ClInclude Include="..\DataManager.h" />
     <ClInclude Include="..\Drawing.h" />
+    <ClInclude Include="..\GL\glext.h" />
+    <ClInclude Include="..\imgui\imconfig.h" />
+    <ClInclude Include="..\imgui\imgui.h" />
+    <ClInclude Include="..\imgui\imgui_internal.h" />
+    <ClInclude Include="..\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Log.h" />
     <ClInclude Include="..\Message.h" />
     <ClInclude Include="..\MessageHandlers.h" />
+    <ClInclude Include="..\ConfigObserver.h" />
+    <ClInclude Include="..\PluginDefs.h" />
+    <ClInclude Include="..\stb_image.h" />
+    <ClInclude Include="..\SystemGL.h" />
     <ClInclude Include="..\Timer.h" />
     <ClInclude Include="..\UDPSocket.h" />
+    <ClInclude Include="..\xsb_public\ImgFontAtlas.h" />
+    <ClInclude Include="..\xsb_public\ImgFreeTypeFontAtlas.h" />
+    <ClInclude Include="..\xsb_public\ImgWindow.h" />
+    <ClInclude Include="..\xsb_public\WavFile.h" />
+    <ClInclude Include="..\xsb_public\XOGLUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\CameraCallbacks.cpp" />
     <ClCompile Include="..\Configuration.cpp" />
+    <ClCompile Include="..\ConfigWindow.cpp" />
     <ClCompile Include="..\DataManager.cpp" />
     <ClCompile Include="..\Drawing.cpp" />
+    <ClCompile Include="..\imgui\imgui.cpp" />
+    <ClCompile Include="..\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\imgui\misc\freetype\imgui_freetype.cpp" />
     <ClCompile Include="..\Log.cpp" />
     <ClCompile Include="..\Message.cpp" />
     <ClCompile Include="..\MessageHandlers.cpp" />
     <ClCompile Include="..\Timer.cpp" />
     <ClCompile Include="..\UDPSocket.cpp" />
     <ClCompile Include="..\XPCPlugin.cpp" />
+    <ClCompile Include="..\xsb_public\ImgFontAtlas.cpp" />
+    <ClCompile Include="..\xsb_public\ImgFreeTypeFontAtlas.cpp" />
+    <ClCompile Include="..\xsb_public\ImgWindow.cpp" />
+    <ClCompile Include="..\xsb_public\WavFile.cpp" />
+    <ClCompile Include="..\xsb_public\XOGLUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\SDK\Libraries\Win\XPLM.lib" />
     <Library Include="..\SDK\Libraries\Win\XPLM_64.lib" />
-    <Library Include="..\SDK\Libraries\Win\XPWidgets.lib" />
-    <Library Include="..\SDK\Libraries\Win\XPWidgets_64.lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -240,6 +276,7 @@
     <Import Project="packages\boost.1.78.0\build\boost.targets" Condition="Exists('packages\boost.1.78.0\build\boost.targets')" />
     <Import Project="packages\boost_program_options-vc143.1.78.0\build\boost_program_options-vc143.targets" Condition="Exists('packages\boost_program_options-vc143.1.78.0\build\boost_program_options-vc143.targets')" />
     <Import Project="packages\fmt-static.7.0.3.4\build\fmt-static.targets" Condition="Exists('packages\fmt-static.7.0.3.4\build\fmt-static.targets')" />
+    <Import Project="packages\freetype2.2.6.0.1\build\native\freetype2.targets" Condition="Exists('packages\freetype2.2.6.0.1\build\native\freetype2.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -248,5 +285,6 @@
     <Error Condition="!Exists('packages\boost.1.78.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost.1.78.0\build\boost.targets'))" />
     <Error Condition="!Exists('packages\boost_program_options-vc143.1.78.0\build\boost_program_options-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost_program_options-vc143.1.78.0\build\boost_program_options-vc143.targets'))" />
     <Error Condition="!Exists('packages\fmt-static.7.0.3.4\build\fmt-static.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\fmt-static.7.0.3.4\build\fmt-static.targets'))" />
+    <Error Condition="!Exists('packages\freetype2.2.6.0.1\build\native\freetype2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\freetype2.2.6.0.1\build\native\freetype2.targets'))" />
   </Target>
 </Project>

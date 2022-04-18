@@ -61,10 +61,14 @@
 #include "MessageHandlers.h"
 #include "UDPSocket.h"
 #include "Timer.h"
+#include "ConfigWindow.h"
+#include "PluginDefs.h"
 
 // XPLM Includes
 #include "XPLMProcessing.h"
 #include "XPLMUtilities.h"
+#include "XPLMMenus.h"
+#include "XPLMDataAccess.h"
 
 // System Includes
 #include <cstdlib>
@@ -74,17 +78,22 @@
 #include <mach/mach_time.h>
 #endif
 
+#ifndef XPLM300
+#error This plugin requires XPLM303 or later.
+#endif
+
 #include "Configuration.h"
 
 #define RECVPORT 49009 // Port that the plugin receives commands on
 
 #define OPS_PER_CYCLE 20 // Max Number of operations per cycle
 
-#define XPC_PLUGIN_VERSION "1.3-rc.1-corn"
-
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+
+constexpr auto pluginMainMenu = "X-Plane Connect";
+constexpr auto settingsCommand = "uni/xpconnect/toggle_config";
 
 using namespace std;
 namespace pt = boost::property_tree;
@@ -92,16 +101,23 @@ namespace pt = boost::property_tree;
 XPC::UDPSocket* sock = NULL;
 XPC::Timer* timer = NULL;
 
-unique_ptr<configuration::Configuration> config;
+shared_ptr<configuration::Configuration> config;
+shared_ptr<ConfigWindow> configWindow;
 
 double start;
 double lap;
 static double timeConvert = 0.0;
 int benchmarkingSwitch = 0; // 1 = time for operations, 2 = time for op + cycle;
 
+XPLMCommandRef configCommand = nullptr;
+XPLMMenuID pluginMenu = nullptr;
+
+
 uint16_t socket_port = 0;
 
+
 PLUGIN_API int XPluginStart(char* outName, char* outSig, char* outDesc);
+int ToggleSettings(XPLMCommandRef inCommand, XPLMCommandPhase inPhase, void* inRefcon);
 PLUGIN_API void	XPluginStop(void);
 PLUGIN_API void XPluginDisable(void);
 PLUGIN_API int XPluginEnable(void);
@@ -115,26 +131,51 @@ PLUGIN_API int XPluginStart(char* outName, char* outSig, char* outDesc)
 	strcpy(outDesc, "X Plane Communications Toolbox\nCopyright (c) 2013-2018 United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All Rights Reserved.");
 
 #if (__APPLE__)
-	if ( timeConvert <= 1e-9 ) // is about 0
+	if (timeConvert <= 1e-9) // is about 0
 	{
 		mach_timebase_info_data_t timeBase;
 		(void)mach_timebase_info(&timeBase);
 		timeConvert = (double)timeBase.numer /
-		(double)timeBase.denom /
-		1000000000.0;
+			(double)timeBase.denom /
+			1000000000.0;
 	}
 #endif
-	XPC::Log::Initialize(XPC_PLUGIN_VERSION);
+	XPC::Log::Initialize(XPC_PLUGIN_VERSION, LOG_TRACE);
 	XPC::Log::WriteLine(LOG_INFO, "EXEC", "Plugin Start");
 	XPC::DataManager::Initialize();
-
+	config = make_shared<configuration::Configuration>();
+	config->load();
+	XPC::Log::SetLogLevel(config->getOption<int>("logger.level"));
+	
+	auto g_menu_container_idx = XPLMAppendMenuItem(XPLMFindPluginsMenu(), pluginMainMenu, 0, 0);
+	pluginMenu = XPLMCreateMenu(pluginMainMenu, XPLMFindPluginsMenu(), g_menu_container_idx, nullptr, nullptr);
+	configCommand = XPLMCreateCommand(settingsCommand, "Toggle X-Plane Connect Settings");
+	XPLMRegisterCommandHandler(configCommand, ToggleSettings, 1, nullptr);
+	XPLMAppendMenuItemWithCommand(pluginMenu, "Settings", XPLMFindCommand(settingsCommand));
+	
+	ImgWindow::sFontAtlas = std::make_shared<ImgFontAtlas>();
+	ImgWindow::sFontAtlas->AddFontFromFileTTF("./Resources/fonts/Roboto-Regular.ttf", 18);
+	configWindow = std::make_shared<ConfigWindow>(config, 50, 600, 300, 400);
+	config->attachWindow(configWindow);
+	
 	return 1;
+}
+
+int	ToggleSettings(XPLMCommandRef       inCommand,
+	XPLMCommandPhase     inPhase,
+	void* inRefcon)
+{
+	if (inPhase == xplm_CommandEnd)
+		configWindow->SetVisible(!configWindow->GetVisible());
+	return 0;
 }
 
 PLUGIN_API void	XPluginStop(void)
 {
 	XPC::Log::WriteLine(LOG_INFO, "EXEC", "Plugin Shutdown");
 	XPC::Log::Close();
+	XPLMUnregisterCommandHandler(configCommand, ToggleSettings, 0, 0);
+	XPLMDestroyMenu(pluginMenu);
 }
 
 PLUGIN_API void XPluginDisable(void)
@@ -152,7 +193,7 @@ PLUGIN_API void XPluginDisable(void)
 	XPC::Drawing::ClearWaypoints();
 
 	XPC::Log::WriteLine(LOG_INFO, "EXEC", "Plugin Disabled, sockets closed");
-	
+
 	timer->stop();
 	delete timer;
 	timer = NULL;
@@ -161,13 +202,13 @@ PLUGIN_API void XPluginDisable(void)
 PLUGIN_API int XPluginEnable(void)
 {
 	// read config
-	config = make_unique<configuration::Configuration>();
+	
 	config->load();
 
 	// Open sockets
 	sock = new XPC::UDPSocket(config->getPort());
 	timer = new XPC::Timer();
-	
+
 	XPC::MessageHandlers::SetSocket(sock);
 
 	XPC::Log::WriteLine(LOG_INFO, "EXEC", "Plugin Enabled, sockets opened");
@@ -181,14 +222,16 @@ PLUGIN_API int XPluginEnable(void)
 	void* refcon = NULL; // Don't pass anything to the callback directly
 	XPLMRegisterFlightLoopCallback(XPCFlightLoopCallback, interval, refcon);
 
-	
+
 	int xpVer;
 	XPLMGetVersions(&xpVer, NULL, NULL);
-	
-	timer->start(chrono::milliseconds(1000), [=]{
+
+	timer->start(chrono::milliseconds(1000), [=] {
 		XPC::MessageHandlers::SendBeacon(XPC_PLUGIN_VERSION, RECVPORT, xpVer);
-	});
-	
+		});
+
+
+
 
 	return 1;
 }
@@ -219,7 +262,7 @@ float XPCFlightLoopCallback(float inElapsedSinceLastCall,
 		if (benchmarkingSwitch > 0)
 		{
 #if (__APPLE__)
-			start = (double)mach_absolute_time( ) * timeConvert;
+			start = (double)mach_absolute_time() * timeConvert;
 #endif
 		}
 
@@ -233,7 +276,7 @@ float XPCFlightLoopCallback(float inElapsedSinceLastCall,
 		if (benchmarkingSwitch > 0)
 		{
 #if (__APPLE__)
-			lap = (double)mach_absolute_time( ) * timeConvert;
+			lap = (double)mach_absolute_time() * timeConvert;
 			diff_t = lap - start;
 			XPC::Log::FormatLine(LOG_INFO, "EXEC", "Runtime %.6f", diff_t);
 #endif

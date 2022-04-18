@@ -149,7 +149,7 @@ namespace XPC
 		}
 		else
 		{
-			Log::FormatLine(LOG_INFO, tag, "Send succeeded. (remote: %s)", GetHost(remote).c_str());
+			Log::FormatLine(LOG_TRACE, tag, "Send succeeded. (remote: %s)", GetHost(remote).c_str());
 		}
 	}
 	

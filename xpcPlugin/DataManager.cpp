@@ -25,6 +25,9 @@
 #include <cmath>
 #include <cstdio>
 #include <map>
+#include "Configuration.h"
+
+extern std::shared_ptr<configuration::Configuration> config;
 
 namespace XPC
 {
@@ -34,7 +37,7 @@ namespace XPC
 	static map<DREF, XPLMDataRef> drefs;
 	static map<DREF, XPLMDataRef> mdrefs[PLANE_COUNT];
 	static map<string, XPLMDataRef> sdrefs;
-
+	
 	DREF XPData[134][8] = { DREF_None };
 
 	void DataManager::Initialize()
@@ -145,6 +148,9 @@ namespace XPC
 		drefs.insert(make_pair(DREF_MP5Alt, XPLMFindDataRef("sim/multiplayer/position/plane5_el")));
 		drefs.insert(make_pair(DREF_MP6Alt, XPLMFindDataRef("sim/multiplayer/position/plane6_el")));
 		drefs.insert(make_pair(DREF_MP7Alt, XPLMFindDataRef("sim/multiplayer/position/plane7_el")));
+		
+		drefs.insert(make_pair(DREF_MFuel, XPLMFindDataRef("sim/flightmodel/weight/m_fuel")));
+		drefs.insert(make_pair(DREF_AcfICAO, XPLMFindDataRef("sim/aircraft/view/acf_ICAO")));
 
 		char multi[256];
 		for (int i = 1; i < PLANE_COUNT; i++)
@@ -512,6 +518,18 @@ namespace XPC
 
 	void DataManager::Set(const string& dref, float values[], int size)
 	{
+		if (dref == "sim/flightmodel/weight/m_fuel") {
+			
+			char buf[500] = {0};
+			XPLMGetDatab(drefs[DREF_AcfICAO], buf, 0, 500);
+			auto acfIcao = std::string(buf);
+			if (config->isInBlacklist(acfIcao)) {
+				if (config->getOption<bool>(fmt::format("blacklist.{}.fuel", acfIcao))) {
+					Log::FormatLine(LOG_INFO, "DMAN", "Fuel for aircraft %s is blacklisted, not setting", acfIcao.c_str());
+					return;
+				}
+			}
+		}
 		XPLMDataRef& xdref = sdrefs[dref];
 		if (xdref == NULL)
 		{

@@ -1,0 +1,6 @@
+[submodule "xpcPlugin/xsb_public"]
+	path = xpcPlugin/xsb_public
+	url = https://github.com/xsquawkbox/xsb_public.git
+[submodule "xpcPlugin/imgui"]
+	path = xpcPlugin/imgui
+	url = https://github.com/ocornut/imgui.git

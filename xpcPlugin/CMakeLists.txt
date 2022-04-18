@@ -4,9 +4,14 @@ project(XPlaneConnect)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(SDK/CHeaders/XPLM)
+include_directories(lib/GL)
+include_directories(lib/KHR)
+include_directories(imgui)
+include_directories(imgui/misc/freetype)
+include_directories(xsb_public)
 include_directories(../C/src)
 
-add_definitions(-DXPLM200 -DLIN=1)
+add_definitions(-DXPLM200 -DXPLM300 -DXPLM301 -DXPLM210 -DXPLM_DEPRECATED -DLIN=1)
 
 SET(CMAKE_C_COMPILER gcc)
 SET(CMAKE_CXX_COMPILER g++)
@@ -24,12 +29,23 @@ set(Boost_USE_STATIC_RUNTIME    OFF)
 find_package(Boost REQUIRED )
 include_directories(${Boost_INCLUDE_DIRS})
 
-add_library(xpc64 SHARED XPCPlugin.cpp
+add_library(xpc64 SHARED 
+	Imgui/imgui.cpp
+	Imgui/imguo_draw.cpp
+	Imgui/imgui_freetype.cpp
+	Imgui/imgui_tables.cpp
+	Imgui/imgui_widgets.cpp
+	xsb_public/ImgWindow.cpp
+	xsb_public/ImgFreeTypeFontAtlas.cpp
+	xsb_public/XOGLUtils.cpp
+	xsb_public/WavFile.cpp
+	XPCPlugin.cpp
 	CameraCallbacks.cpp
 	DataManager.cpp
 	Drawing.cpp
 	Log.cpp
 	Configuration.cpp
+	ConfigWindow.cpp
 	Message.cpp
 	MessageHandlers.cpp
 	Timer.cpp
@@ -39,21 +55,5 @@ set_target_properties(xpc64 PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${XPC_OUTPUT_DIR
 set_target_properties(xpc64 PROPERTIES OUTPUT_NAME ${XPC_OUTPUT_NAME})
 set_target_properties(xpc64 PROPERTIES COMPILE_FLAGS "-m64 -fno-stack-protector" LINK_FLAGS "-shared -rdynamic -nodefaultlibs -undefined_warning -m64 -fno-stack-protector")
 target_link_libraries(xpc64 ${Boost_LIBRARIES})
-add_library(xpc32 SHARED XPCPlugin.cpp
-	CameraCallbacks.cpp
-	DataManager.cpp
-	Drawing.cpp
-	Log.cpp
-	Message.cpp
-	Configuration.cpp
-	MessageHandlers.cpp
-	Timer.cpp
-	UDPSocket.cpp)
-set_target_properties(xpc32 PROPERTIES PREFIX "" SUFFIX ".xpl")
-set_target_properties(xpc32 PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${XPC_OUTPUT_DIR})
-set_target_properties(xpc32 PROPERTIES OUTPUT_NAME ${XPC_OUTPUT_NAME})
-set_target_properties(xpc32 PROPERTIES COMPILE_FLAGS "-m32 -fno-stack-protector" LINK_FLAGS "-shared -rdynamic -nodefaultlibs -undefined_warning -m32 -fno-stack-protector")
-target_link_libraries(xpc32 ${Boost_LIBRARIES})	
-# Switch install targets when uncommenting the 32 bit line above.
+
 install(TARGETS xpc64 DESTINATION XPlaneConnect/64 RENAME lin.xpl)
-install(TARGETS xpc32 DESTINATION XPlaneConnect/ RENAME lin.xpl)

@@ -133,7 +133,15 @@ namespace XPC
 		DREF_MP4Alt,
 		DREF_MP5Alt,
 		DREF_MP6Alt,
-		DREF_MP7Alt
+		DREF_MP7Alt,
+
+		// Aircraft info
+		DREF_AcfTailnum = 3000,
+		DREF_AcfAuthor,
+		DREF_AcfModeS,
+		DREF_AcfDescription,
+		DREF_AcfICAO,
+		DREF_MFuel
 	};
 
 	/// Maps X-Plane dataref lines to XPC DREF values.

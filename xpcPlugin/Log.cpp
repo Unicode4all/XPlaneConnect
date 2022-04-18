@@ -88,9 +88,10 @@ namespace XPC
 		std::fprintf(fd, str);
 	}
 
-	void Log::Initialize(const std::string& version)
+	void Log::Initialize(const std::string& version, int level)
 	{
-		if (LOG_LEVEL == LOG_OFF)
+		LogLevel = level;
+		if (LogLevel == LOG_OFF)
 		{
 			return;
 		}
@@ -132,6 +133,16 @@ namespace XPC
 		}
 	}
 
+	void Log::SetLogLevel(int loglevel)
+	{
+		LogLevel = loglevel;
+	}
+
+	int Log::GetLogLevel()
+	{
+		return LogLevel;
+	}
+
 	void Log::Close()
 	{
 		if (fd)
@@ -142,7 +153,7 @@ namespace XPC
 
 	void Log::WriteLine(int level, const std::string& tag, const std::string& value)
 	{
-		if (level > LOG_LEVEL || !fd)
+		if (level > LogLevel || !fd)
 		{
 			return;
 		}
@@ -157,7 +168,7 @@ namespace XPC
 	{
 		va_list args;
 
-		if (level > LOG_LEVEL || !fd)
+		if (level > LogLevel || !fd)
 		{
 			return;
 		}
